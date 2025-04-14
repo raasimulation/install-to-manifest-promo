@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>////REGISTER\\</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+            transform: scaleX(-1);
+            display: none;
+        }
+
+        .content,
+        .register {
+            position: absolute;
+            text-align: center;
+            color: white;
+            font-weight: 200;
+            mix-blend-mode: exclusion;
+        }
+
+        .schedule {
+            position: absolute;
+            text-align: center;
+            bottom: 5%;
+            color: white;
+            font-weight: 200;
+            mix-blend-mode: exclusion;
+        }
+
+        h1 {
+            font-size: 160px;
+        }
+
+        .schedule {
+            font-size: 40px;
+            -webkit-text-stroke: 0.5px black;
+        }
+
+        .register {
+            font-size: 40px;
+            top: 5%;
+        }
+
+        .new-text {
+            position: absolute;
+            font-size: 64px;
+            left: 20px;
+            top: 5%;
+            color: greenyellow;
+            -webkit-text-stroke: 0.5px black;
+            text-align: left;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="backgroundMusic" loop autoplay>
+        <source src="allineed.mp3" type="audio/mpeg">
+    </audio>
+    <video id="webcam" autoplay playsinline></video>
+    <div class="register">REGISTER NOW / HYBRID</div>
+    <div class="content">
+        <h1>INSTALL<br>TO MANIFEST</h1>
+    </div>
+    <div class="schedule">FALL 2025<br>Tue / Thu / 5:30 - 8:20 PM</div>
+    <div class="new-text" id="newText"></div>
+
+    <script>
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                document.getElementById("webcam").srcObject = stream;
+            } catch (err) {
+                console.error("Error accessing webcam:", err);
+            }
+        }
+
+        function typeText(element, text, speed, callback) {
+            let i = 0;
+            element.innerHTML = "";
+            element.style.display = "block";
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    setTimeout(callback, 1000);
+                }
+            }
+            type();
+        }
+
+        function toggleElements() {
+            const contentElements = document.querySelectorAll(".content, .schedule, .register");
+            const video = document.getElementById("webcam");
+            const newText = document.getElementById("newText");
+            const music = document.getElementById("backgroundMusic");
+
+            const phrases = [
+                "Try reflecting a mirror to another mirror—watch yourself replicate endlessly.",
+                "Gleaning from various mediums, we will learn how to use things around us to set up small batches of lore.",
+                "We will activate meaning through seeing, touching, shaping and recording.",
+                "We will discover the meaning of private/public and collective/individual through space and objects, and how the two can be interlinked with lore-making. ",
+                "Slowly building up from exercises every week, we will learn through practice and work on a final exercise.",
+                "What you seek is seeking you.",
+                "What we do in this class will result in videos, performances, site interventions, audio recordings, images, ephemera and interactive pieces."
+            ];
+
+            function getRandomPhrase() {
+                return phrases[Math.floor(Math.random() * phrases.length)];
+            }
+
+            let videoEnabled = false;
+
+            setTimeout(() => {
+                contentElements.forEach(el => el.style.display = "none");
+
+                let flickerCount = 0;
+                const flickerInterval = setInterval(() => {
+                    document.body.style.backgroundColor = (flickerCount % 2 === 0) ? "black" : "white";
+                    flickerCount++;
+                    if (flickerCount > 6) {
+                        clearInterval(flickerInterval);
+                        document.body.style.backgroundColor = "black";
+                        typeText(newText, getRandomPhrase(), 35, () => {
+                            setTimeout(() => {
+                                let flickerCount2 = 0;
+                                const flickerInterval2 = setInterval(() => {
+                                    document.body.style.backgroundColor = (flickerCount2 % 2 === 0) ? "black" : "white";
+                                    flickerCount2++;
+                                    if (flickerCount2 > 6) {
+                                        clearInterval(flickerInterval2);
+                                        document.body.style.backgroundColor = "black";
+                                        newText.style.display = "none";
+                                        contentElements.forEach(el => el.style.display = "block");
+                                        setTimeout(toggleElements, 100);
+                                    }
+                                }, 500);
+                            }, 2000);
+                        });
+                    }
+                }, 200);
+            }, 4000);
+
+            setInterval(() => {
+                video.style.display = videoEnabled ? "none" : "block";
+                videoEnabled = !videoEnabled;
+            }, 1500);
+
+            music.volume = 0.5;
+            startCycle();
+        }
+
+        startWebcam();
+        toggleElements();
+    </script>
+</body>
+
+</html>
